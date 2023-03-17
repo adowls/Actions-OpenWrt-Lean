@@ -68,7 +68,7 @@ jobs:
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         ln -sf /workdir/lede $GITHUB_WORKSPACE/lede
 
-      name: copy coolsnowwolf add-on
+    - name: copy coolsnowwolf add-on
       run: |
         cd openwrt
         cp -R ../lede/package/boot/arm-trusted-firmware-rockchip-vendor package/boot/

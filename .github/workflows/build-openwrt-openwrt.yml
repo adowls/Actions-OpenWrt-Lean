@@ -80,7 +80,7 @@ jobs:
         rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch
         rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-documentation.patch
         rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch
-        rm target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3568*
+        cp ../etc/rockchip-vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip-vop2.h
 
     - name: Load custom feeds
       run: |

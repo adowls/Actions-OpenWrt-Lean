@@ -8,8 +8,8 @@ git checkout target/linux/rockchip/Makefile
 rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch
 rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-documentation.patch
 rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch
-mkdir target/linux/rockchip/files/include/dt-bindings/soc/
-cp ../etc/rockchip-vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip-vop2.h
+# mkdir target/linux/rockchip/files/include/dt-bindings/soc/
+# cp ../etc/rockchip-vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip-vop2.h
 sed -i 's/drm_dp_aux_bus.ko@lt5.19/drm_dp_aux_bus.ko@ge5.19/' target/linux/rockchip/modules.mk
 
 ./scripts/feeds update -a
@@ -21,7 +21,7 @@ sed -i '/.*rockpro64/d' .config
 sed -i '/.*rock-pi-4a/d' .config
 sed -i 's/r4s/r4se/' .config
 sed -i 's/CONFIG_TARGET_ALL_PROFILES=y/# CONFIG_TARGET_ALL_PROFILES is not set/' .config
-sed -i 's/CONFIG_PACKAGE_qosify=m/# CONFIG_PACKAGE_qosify is not set/' .config
+# sed -i 's/CONFIG_PACKAGE_qosify=m/# CONFIG_PACKAGE_qosify is not set/' .config
 make defconfig
-
+sed -i 's/=m$/=n/' .config
 make -j11 download

@@ -10,6 +10,7 @@ rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-do
 rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch
 mkdir target/linux/rockchip/files/include/dt-bindings/soc/
 cp ../etc/rockchip-vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip-vop2.h
+sed -i 's/drm_dp_aux_bus.ko@lt5.19/drm_dp_aux_bus.ko@ge5.19/' target/linux/rockchip/modules.mk
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a

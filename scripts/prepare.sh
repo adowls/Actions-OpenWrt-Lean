@@ -23,5 +23,5 @@ sed -i 's/r4s/r4se/' .config
 sed -i 's/CONFIG_TARGET_ALL_PROFILES=y/# CONFIG_TARGET_ALL_PROFILES is not set/' .config
 # sed -i 's/CONFIG_PACKAGE_qosify=m/# CONFIG_PACKAGE_qosify is not set/' .config
 make defconfig
-sed -i 's/=m$/=n/' .config
+sed -i '/=m$/d' .config
 make -j11 download

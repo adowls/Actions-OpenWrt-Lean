@@ -15,6 +15,7 @@ git checkout target/linux/rockchip/image/armv8.mk
 sed -i '25,44d' target/linux/rockchip/image/armv8.mk
 sed -i '5,14d' target/linux/rockchip/image/armv8.mk
 sed -i 's/r4s/r4se/' target/linux/rockchip/image/armv8.mk
+mv target/linux/rockchip/image/nanopi-r4s.bootscript target/linux/rockchip/image/nanopi-r4se.bootscript
 cp ../r4se.v22.03.3/image-rk3399-nanopi-r4se.dtb  target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dtb
 
 ./scripts/feeds update -a

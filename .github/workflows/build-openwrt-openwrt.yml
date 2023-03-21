@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt from OpenWRT
+name: Build R4SE OpenWrt v22.03.3 from OpenWRT
 
 on:
   repository_dispatch:
@@ -80,20 +80,20 @@ jobs:
         rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch
         rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-documentation.patch
         rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch
-        # fix missing rockchip,vop2.h error
-        mkdir target/linux/rockchip/files/include/dt-bindings/soc/
-        cp $GITHUB_WORKSPACE/r4se.v22.03.3/rockchip,vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip,vop2.h
-        # fix drm_dp_aux_bus.ko error
+        # # # fix missing rockchip,vop2.h error
+        # mkdir target/linux/rockchip/files/include/dt-bindings/soc/
+        # cp $GITHUB_WORKSPACE/r4se.v22.03.3/rockchip,vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip,vop2.h
+        # # # fix drm_dp_aux_bus.ko error
         # sed -i 's/drm_dp_aux_bus.ko@lt5.19/drm_dp_aux_bus.ko@ge5.19/' target/linux/rockchip/modules.mk
-        # fix other rockchip u-boot compile error
+        # # # fix other rockchip u-boot compile error
         git checkout target/linux/rockchip/image/armv8.mk
         sed -i '25,44d' target/linux/rockchip/image/armv8.mk
         sed -i '5,14d' target/linux/rockchip/image/armv8.mk
         sed -i 's/friendlyarm_nanopi-r4s/friendlyarm_nanopi-r4se/' target/linux/rockchip/image/armv8.mk
         sed -i 's/NanoPi R4S/NanoPi R4SE/' target/linux/rockchip/image/armv8.mk
         sed -i 's/nanopi-r4s-rk3399/nanopi-r4se-rk3399/' target/linux/rockchip/image/armv8.mk
-        # fix rk3399-nanopi-r4se.dtb: No such file or directory
-        cp $GITHUB_WORKSPACE/r4se.v22.03.3/image-rk3399-nanopi-r4se.dtb  target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dtb
+        # # # fix rk3399-nanopi-r4se.dtb: No such file or directory
+        # cp $GITHUB_WORKSPACE/r4se.v22.03.3/image-rk3399-nanopi-r4se.dtb  target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dtb
 
     - name: Load custom feeds
       run: |
@@ -135,7 +135,8 @@ jobs:
         sed -i 's/CONFIG_TARGET_ALL_PROFILES=y/# CONFIG_TARGET_ALL_PROFILES is not set/' .config
         make defconfig
         sed -i '/=m$/d' .config
-        make download -j8
+        sed -i 's/CONFIG_AUTOREMOVE=y/# CONFIG_AUTOREMOVE is not set/' .config
+        make download -j$(nproc)
         # find dl -size -1024c -exec ls -l {} \;
         # find dl -size -1024c -exec rm -f {} \;
 

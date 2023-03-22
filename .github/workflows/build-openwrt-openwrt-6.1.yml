@@ -76,6 +76,7 @@ jobs:
         cp -R ../lede/package/boot/uboot-rockchip package/boot/
         rm -Rf target/linux/rockchip
         cp -R ../lede/target/linux/rockchip target/linux/
+        cp ../lede/include/kernel-6.1 include/
         git checkout target/linux/rockchip/Makefile
         sed -i 's/KERNEL_PATCHVER=5.10/KERNEL_PATCHVER=6.1/' target/linux/rockchip/Makefile
         # rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch

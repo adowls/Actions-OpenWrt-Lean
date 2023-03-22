@@ -22,6 +22,7 @@ cp -R ../lede/package/lean/r8168 package/lean/
 sed -i 's/kmod-r8169/kmod-r8168 -urngd/' target/linux/rockchip/image/armv8.mk
 # cp ../r4se.v22.03.3/image-rk3399-nanopi-r4se.dtb  target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4se.dtb
 cp ../lede/include/image-commands.mk include/image-commands.mk
+cp ../lede/target/linux/rockchip/patches-5.15/105-rockchip-rock-pi-4.patch target/linux/rockchip/patches-5.10/105-rockchip-rock-pi-4.patch
 sed -i 's/ifneq ($(USE_RKBIN),)/ifeq ($(USE_RKBIN),)/' package/boot/uboot-rockchip/Makefile
 
 ./scripts/feeds update -a

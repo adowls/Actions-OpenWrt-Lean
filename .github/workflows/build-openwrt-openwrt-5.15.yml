@@ -77,6 +77,10 @@ jobs:
         rm -Rf target/linux/rockchip
         cp -R ../lede/target/linux/rockchip target/linux/
         cp ../lede/include/kernel-5.15 include/
+
+        rm -Rf target/linux/generic/pending-5.15
+        cp -R ../lede/target/linux/generic/*-5.15 target/linux/generic/
+
         git checkout target/linux/rockchip/Makefile
         sed -i 's/KERNEL_PATCHVER=5.10/KERNEL_PATCHVER=5.15/' target/linux/rockchip/Makefile
         # rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch

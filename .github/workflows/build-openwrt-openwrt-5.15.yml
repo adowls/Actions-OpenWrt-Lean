@@ -24,7 +24,7 @@ permissions:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt/
-  REPO_BRANCH: v22.03.3
+  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: configs/openwrt.r4s.config
   DIY_P1_SH: diy-part1.sh
@@ -76,13 +76,7 @@ jobs:
         cp -R ../lede/package/boot/uboot-rockchip package/boot/
         rm -Rf target/linux/rockchip
         cp -R ../lede/target/linux/rockchip target/linux/
-        cp ../lede/include/kernel-5.15 include/
-
-        rm -Rf target/linux/generic/pending-5.15
-        cp -R ../lede/target/linux/generic/*-5.15 target/linux/generic/
-
         git checkout target/linux/rockchip/Makefile
-        sed -i 's/KERNEL_PATCHVER=5.10/KERNEL_PATCHVER=5.15/' target/linux/rockchip/Makefile
         # rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch
         # rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-documentation.patch
         # rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch

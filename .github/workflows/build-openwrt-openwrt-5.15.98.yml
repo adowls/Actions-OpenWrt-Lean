@@ -23,10 +23,10 @@ permissions:
   contents: write
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt/
+  REPO_URL: https://github.com/adowls/openwrt/
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: configs/openwrt.r4s.config
+  # CONFIG_FILE: configs/openwrt.r4s.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
@@ -71,6 +71,7 @@ jobs:
     - name: copy coolsnowwolf add-on
       run: |
         cd openwrt
+        cp -R ../lede/config .
         cp -R ../lede/package/boot/arm-trusted-firmware-rockchip-vendor package/boot/
         rm -Rf package/boot/uboot-rockchip
         cp -R ../lede/package/boot/uboot-rockchip package/boot/

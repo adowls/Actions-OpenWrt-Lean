@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: 5.10 R4SE OpenWrt v22.03.3 from OpenWRT
+name: 5.10.161 R4SE OpenWrt v22.03.3 from OpenWRT
 
 on:
   repository_dispatch:
@@ -76,22 +76,35 @@ jobs:
         cp -R ../lede/package/boot/uboot-rockchip package/boot/
         rm -Rf target/linux/rockchip
         cp -R ../lede/target/linux/rockchip target/linux/
+        git checkout target/linux/rockchip/armv8/config-5.10
+        echo 'CONFIG_HW_RANDOM_ROCKCHIP=n' >> target/linux/rockchip/armv8/config-5.10
         git checkout target/linux/rockchip/Makefile
         rm target/linux/rockchip/patches-5.10/002-net-usb-r8152-add-LED-configuration-from-OF.patch
         rm target/linux/rockchip/patches-5.10/003-dt-bindings-net-add-RTL8152-binding-documentation.patch
         rm target/linux/rockchip/patches-5.10/600-net-phy-Add-driver-for-Motorcomm-YT85xx-PHYs.patch
+        rm target/linux/rockchip/patches-5.10/803-PM-devfreq-rockchip-add-devfreq-driver-for-rk3328-dmc.patch
         # # # fix missing rockchip,vop2.h error
         # mkdir target/linux/rockchip/files/include/dt-bindings/soc/
         # cp $GITHUB_WORKSPACE/r4se.v22.03.3/rockchip,vop2.h target/linux/rockchip/files/include/dt-bindings/soc/rockchip,vop2.h
         # # # fix drm_dp_aux_bus.ko error
         # sed -i 's/drm_dp_aux_bus.ko@lt5.19/drm_dp_aux_bus.ko@ge5.19/' target/linux/rockchip/modules.mk
+        rm target/linux/rockchip/modules.mk
         # # # fix other rockchip u-boot compile error
-        git checkout target/linux/rockchip/image/armv8.mk
-        sed -i '25,44d' target/linux/rockchip/image/armv8.mk
-        sed -i '5,14d' target/linux/rockchip/image/armv8.mk
-        sed -i 's/friendlyarm_nanopi-r4s/friendlyarm_nanopi-r4se/' target/linux/rockchip/image/armv8.mk
-        sed -i 's/NanoPi R4S/NanoPi R4SE/' target/linux/rockchip/image/armv8.mk
-        sed -i 's/nanopi-r4s-rk3399/nanopi-r4se-rk3399/' target/linux/rockchip/image/armv8.mk
+        echo 'define Device/friendlyarm_nanopi-r4se' > target/linux/rockchip/image/armv8.mk
+        echo '  DEVICE_VENDOR := FriendlyARM' >> target/linux/rockchip/image/armv8.mk
+        echo '  DEVICE_MODEL := NanoPi R4SE' >> target/linux/rockchip/image/armv8.mk
+        echo '  SOC := rk3399' >> target/linux/rockchip/image/armv8.mk
+        echo '  UBOOT_DEVICE_NAME := nanopi-r4se-rk3399' >> target/linux/rockchip/image/armv8.mk
+        echo '  IMAGE/sysupgrade.img.gz := boot-common | boot-script nanopi-r4s | pine64-bin | gzip | append-metadata' >> target/linux/rockchip/image/armv8.mk
+        echo '  DEVICE_PACKAGES := kmod-r8169' >> target/linux/rockchip/image/armv8.mk
+        echo 'endef' >> target/linux/rockchip/image/armv8.mk
+        echo 'TARGET_DEVICES += friendlyarm_nanopi-r4se' >> target/linux/rockchip/image/armv8.mk
+        # git checkout target/linux/rockchip/image/armv8.mk
+        # sed -i '25,44d' target/linux/rockchip/image/armv8.mk
+        # sed -i '5,14d' target/linux/rockchip/image/armv8.mk
+        # sed -i 's/friendlyarm_nanopi-r4s/friendlyarm_nanopi-r4se/' target/linux/rockchip/image/armv8.mk
+        # sed -i 's/NanoPi R4S/NanoPi R4SE/' target/linux/rockchip/image/armv8.mk
+        # sed -i 's/nanopi-r4s-rk3399/nanopi-r4se-rk3399/' target/linux/rockchip/image/armv8.mk
         # # # fix Packages for kmod-r8169 found, but incompatible with the architectures configured
         # mkdir -p package/lean
         # cp -R ../lede/package/lean/r8168 package/lean/
@@ -102,7 +115,7 @@ jobs:
         sed -i 's/$(STAGING_DIR_HOST)\/bin\/gzip -f -9n -c/gzip -f -9n -c/' include/image-commands.mk
         cp ../lede/target/linux/rockchip/patches-5.15/105-rockchip-rock-pi-4.patch target/linux/rockchip/patches-5.10/105-rockchip-rock-pi-4.patch
         # # # fix nanopi-r4se-rk3399-idbloader.img': No such file or directory
-        sed -i 's/ifneq ($(USE_RKBIN),)/ifeq ($(USE_RKBIN),)/' package/boot/uboot-rockchip/Makefile
+        # sed -i 's/ifneq ($(USE_RKBIN),)/ifeq ($(USE_RKBIN),)/' package/boot/uboot-rockchip/Makefile
 
     - name: Load custom feeds
       run: |
@@ -141,10 +154,23 @@ jobs:
         sed -i '/.*rockpro64/d' .config
         sed -i '/.*rock-pi-4a/d' .config
         sed -i 's/r4s/r4se/' .config
+        sed -i 's/CONFIG_TARGET_MULTI_PROFILE=y/# CONFIG_TARGET_MULTI_PROFILE is not set/' .config
         sed -i 's/CONFIG_TARGET_ALL_PROFILES=y/# CONFIG_TARGET_ALL_PROFILES is not set/' .config
+        sed -i 's/CONFIG_TARGET_PER_DEVICE_ROOTFS=y/# CONFIG_TARGET_PER_DEVICE_ROOTFS is not set/' .config
+        sed -i 's/CONFIG_TARGET_DEVICE_PACKAGES_rockchip_armv8_DEVICE_friendlyarm_nanopi-r4se=""/CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r4se=y/' .config
+        echo 'CONFIG_TARGET_ROOTFS_SQUASHFS=y' >> .config
+        echo '# CONFIG_TARGET_ROOTFS_EXT4FS is not set' >> .config
+
         make defconfig
-        sed -i '/=m$/d' .config
-        sed -i 's/CONFIG_AUTOREMOVE=y/# CONFIG_AUTOREMOVE is not set/' .config
+        sed -i 's/CONFIG_PACKAGE_r8169-firmware=m/CONFIG_PACKAGE_r8169-firmware=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-r8169=m/CONFIG_PACKAGE_kmod-r8169=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-mii=m/CONFIG_PACKAGE_kmod-mii=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-phy-realtek=m/CONFIG_PACKAGE_kmod-phy-realtek=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-mdio-devres=m/CONFIG_PACKAGE_kmod-mdio-devres=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-libphy=m/CONFIG_PACKAGE_kmod-libphy=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-of-mdio=m/CONFIG_PACKAGE_kmod-of-mdio=y/' .config
+        sed -i 's/CONFIG_PACKAGE_kmod-fixed-phy=m/CONFIG_PACKAGE_kmod-fixed-phy=y/' .config
+        # sed -i '/=m$/d' .config
         make download -j$(nproc)
         # find dl -size -1024c -exec ls -l {} \;
         # find dl -size -1024c -exec rm -f {} \;

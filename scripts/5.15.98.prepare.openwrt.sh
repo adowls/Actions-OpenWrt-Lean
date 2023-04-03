@@ -1,10 +1,11 @@
 #!/bin/bash
-git checkout master
 rm .gitignore
 git clean -df
+rm -Rf feeds
 git checkout .
+git checkout master
 
-# cp -R ../lede/config .
+cp -R ../lede/config .
 # cp -R ../lede/target/linux/generic/config-5.15 target/linux/generic/
 
 cp -R ../lede/package/boot/arm-trusted-firmware-rockchip-vendor package/boot/
